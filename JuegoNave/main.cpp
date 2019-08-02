@@ -23,26 +23,57 @@ void OcultalCursor(){
 
 }
 
-int main(){
+class NAVE{
+    int x,y;
+public:
+    NAVE(int _x, int _y): x(_x),y(_y){}
+    void pintar();
+    void borrar();
+    void mover();
+};
 
-   OcultalCursor();
-   int x = 10,y=10;
-   gotoxy(x,y); printf("*");
-
-   bool game_over=false;
-   while(!game_over){
 
 
-        if(kbhit()){
+void NAVE::pintar(){
+    gotoxy(x,y); printf("  %c",30);
+    gotoxy(x,y+1); printf("  %c%c%c",40,207,41);
+    gotoxy(x,y+2); printf("%c%c  %c%c",30,190,190,30);
+
+}
+
+void NAVE::borrar(){
+    gotoxy(x,y); printf("     ");
+    gotoxy(x,y+1); printf("     ");
+    gotoxy(x,y+2); printf("     ");
+
+
+}
+
+void NAVE::mover(){
+    if(kbhit()){
             char tecla = getch();
-            gotoxy(x,y); printf(" ");
+            borrar();
             if(tecla== 'a')x--;
             if(tecla== 'd')x++;
             if(tecla== 'w')y--;
             if(tecla== 's')y++;
-            gotoxy(x,y); printf("*");
+            pintar();
         }
 
+
+}
+
+int main(){
+
+   OcultalCursor();
+   NAVE N(7,7);
+   N.pintar();
+   bool game_over=false;
+   while(!game_over){
+
+
+
+        N.mover();
         Sleep(30);
 
    }
