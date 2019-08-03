@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1564661666 source:c:\xampp\htdocs\github\juegonave\main.cpp
+1564830964 source:c:\xampp\htdocs\github\juegonave\main.cpp
 	<stdio.h>
 	<windows.h>
 	<conio.h>
