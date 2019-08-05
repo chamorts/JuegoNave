@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<windows.h>
 #include<conio.h>
+#include<stdlib.h>
 
 void gotoxy(int x, int y){
     HANDLE hCon;
@@ -44,12 +45,17 @@ void pintar_limites(){
 class NAVE{
     int x,y;
     int corazones;
+    int vidas;
 public:
-    NAVE(int _x, int _y, int _corazones): x(_x),y(_y),corazones(_corazones){}
+    NAVE(int _x, int _y, int _corazones, int _vidas): x(_x),y(_y),corazones(_corazones), vidas(_vidas){}
+    int X(){ return x; }
+    int Y(){ return y; }
+    void COR() { corazones--; }
     void pintar();
     void borrar();
     void mover();
     void pintar_corazones();
+    void morir();
 };
 
 void NAVE::pintar(){
@@ -60,9 +66,9 @@ void NAVE::pintar(){
 }
 
 void NAVE::borrar(){
-    gotoxy(x,y); printf("     ");
-    gotoxy(x,y+1); printf("     ");
-    gotoxy(x,y+2); printf("     ");
+    gotoxy(x,y);   printf("        ");
+    gotoxy(x,y+1); printf("        ");
+    gotoxy(x,y+2); printf("        ");
 
 
 }
@@ -75,7 +81,7 @@ void NAVE::mover(){
             if(tecla == 'd'&& x+6 < 77) x++;
             if(tecla == 'w' && y > 4) y--;
             if(tecla == 's' &&y+3 < 33) y++;
-            //if(tecla == 'e')corazones--;
+            if(tecla == 'e')corazones--;
             pintar();
             pintar_corazones();
         }
@@ -83,6 +89,8 @@ void NAVE::mover(){
 }
 
 void NAVE::pintar_corazones(){
+
+    gotoxy(50,2); printf("Vidas %d",vidas);
     gotoxy(64,2); printf("Salud");
     gotoxy(70,2); printf("     ");
     for(int i = 0; i < corazones; i++){
@@ -90,23 +98,89 @@ void NAVE::pintar_corazones(){
         gotoxy(70+i,2); printf("%c",3);
     }
 
+}
+
+void NAVE::morir(){
+    if(corazones == 0){
+        borrar();
+        gotoxy(x,y);   printf("   **   ");
+        gotoxy(x,y+1); printf("  ****  ");
+        gotoxy(x,y+2); printf("   **   ");
+        Sleep(200);
+
+        borrar();
+        gotoxy(x,y);   printf(" * ** * ");
+        gotoxy(x,y+1); printf("  ****  ");
+        gotoxy(x,y+2); printf(" * ** * ");
+        Sleep(200);
+        borrar();
+        vidas--;
+        corazones = 3;
+        pintar_corazones();
+        pintar();
+    }
+
 
 }
 
+class AST{
+    int x,y;
+public:
+    AST(int _x, int _y):x(_x),y(_y){}
+    void pintar();
+    void mover();
+    void choque(struct NAVE &N);
+
+};
+
+void AST::pintar(){
+    gotoxy(x,y); printf("%c",184);
+
+
+}
+
+void AST::mover(){
+    gotoxy(x,y); printf(" ");
+    y++;
+    if(y > 32){
+        x = rand()%71 + 4;
+        y = 4;
+    }
+    pintar();
+
+}
+
+void AST::choque(struct NAVE &N){
+    if( x >= N.X() && x < N.X()+6 && y >= N.Y() && y <= N.Y()+2)
+        {
+            N.COR();
+            N.borrar();
+            N.pintar();
+            N.pintar_corazones();
+            x = rand()%71 + 4;
+            y = 4;
+        }
+
+
+}
 
 int main(){
 
    OcultalCursor();
    pintar_limites();
-   NAVE N(7,7,3);
+   NAVE N(7,7,3,3);
    N.pintar();
    N.pintar_corazones();
+
+   AST ast1(10,4),ast2(4,8),ast3(15,10);
 
    bool game_over=false;
    while(!game_over){
 
-
-
+        ast1.mover(); ast1.choque(N);
+        ast2.mover(); ast2.choque(N);
+        ast3.mover(); ast3.choque(N);
+        N.morir();
         N.mover();
         Sleep(30);
 
